@@ -57,4 +57,22 @@ public class UserController {
 		return ResponseEntity.status(response.status()).body(response);
     }
 	
+	@GetMapping("/{id}/role")
+	public ResponseEntity<ResponseDTO> getRoles(@PathVariable("id") Long id) {
+		ResponseDTO response = userService.getRolesByUser(id);
+		return ResponseEntity.status(response.status()).body(response);
+	}
+	
+	@PostMapping("/{id}/role/{roleId}")
+	public ResponseEntity<ResponseDTO> addRole(@PathVariable("id") Long userId, @PathVariable("roleId") Long roleId) {
+		ResponseDTO response = userService.addRoleForUser(userId, roleId);
+		return ResponseEntity.status(response.status()).body(response);
+	}
+	
+	@DeleteMapping("/{id}/role/{roleId}")
+	public ResponseEntity<ResponseDTO> removeRole(@PathVariable("id") Long userId, @PathVariable("roleId") Long roleId) {
+		ResponseDTO response = userService.disableRoleForUser(userId, roleId);
+		return ResponseEntity.status(response.status()).body(response);
+	}
+	
 }

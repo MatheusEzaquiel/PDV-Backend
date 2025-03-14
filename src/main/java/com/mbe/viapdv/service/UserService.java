@@ -171,5 +171,65 @@ public class UserService {
 
 		return new ResponseDTO(HttpStatus.OK.value(), disabledUserRoleQty, "Relações Usuário x Papel Desativadas");
 	}
+	
+	public ResponseDTO getRolesByUser(long userId) {
+		
+		List<Role> roleList = userRoleRepos.findRolesByUserId(userId);
+
+		if (roleList.isEmpty())
+			return new ResponseDTO(HttpStatus.NOT_FOUND.value(), null, "Usuário sem Relação com Papel (Função)");
+
+		return new ResponseDTO(HttpStatus.OK.value(), roleList, "Papéis");
+	}
+	
+	public ResponseDTO addRoleForUser(long userId, long roleId) {
+		
+		Optional<Role> optRole = roleRepos.findByIdAndActiveTrue(roleId);
+		if(optRole.isEmpty())
+			return new ResponseDTO(HttpStatus.NOT_FOUND.value(), null, "Esta Função não existe ou não está disponível");
+
+		Optional<User> optUser = userRepos.findById(userId);
+		if (optUser.isEmpty())
+			return new ResponseDTO(HttpStatus.NOT_FOUND.value(), null, "Usuário não encontrado");
+		
+		
+		List<Role> roleList = userRoleRepos.findRolesByUserId(userId);
+		
+		boolean existDuplicateRole = roleList.stream().anyMatch(currentRole -> currentRole.getId().equals(roleId));
+		if(existDuplicateRole)
+			return new ResponseDTO(HttpStatus.CONFLICT.value(), null, "O Usuário já possui esta Função");
+		
+
+		// Create UserRole
+		User user = optUser.get();
+		Role role = optRole.get();
+		
+		UserRoleId id = new UserRoleId(user, role);
+		UserRole userRole = new UserRole(id);
+		userRoleRepos.save(userRole);
+			
+		return new ResponseDTO(HttpStatus.OK.value(), role.getName(), "Papel adicionado ao Usuário");
+	}
+	
+	public ResponseDTO disableRoleForUser(long userId, long roleId) {
+		
+		Optional<Role> optRole = roleRepos.findByIdAndActiveTrue(roleId);
+		if(optRole.isEmpty())
+			return new ResponseDTO(HttpStatus.NOT_FOUND.value(), null, "Esta Função não existe ou não está disponível");
+
+		Optional<User> optUser = userRepos.findByIdAndActiveTrue(userId);
+		if (optUser.isEmpty())
+			return new ResponseDTO(HttpStatus.NOT_FOUND.value(), null, "Usuário não encontrado");
+		
+		
+		Optional<UserRole> userRoleSelected = userRoleRepos.findByUserIdAndRoleId(userId, roleId);
+		if(userRoleSelected.isEmpty())
+			return new ResponseDTO(HttpStatus.NOT_FOUND.value(), null, "Este Usuário não possui esta Função");
+		
+		userRoleSelected.get().setActive(false);
+		userRoleRepos.save(userRoleSelected.get());
+			
+		return new ResponseDTO(HttpStatus.OK.value(), null, "Papel removido do Usuário");
+	}
 
 }
