@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.mbe.viapdv.model.product.dto.UpdateProductDTO;
+import com.mbe.viapdv.model.product.dto.CreateProductDTO;
 import com.mbe.viapdv.repository.IProductRepository;
 import com.mbe.viapdv.service.CategoryService;
 import com.mbe.viapdv.service.ProductService;
@@ -43,7 +44,7 @@ public class ProductController {
     }
     
     @PostMapping
-    public ResponseEntity<ResponseDTO> create(@RequestBody UpdateProductDTO data) {
+    public ResponseEntity<ResponseDTO> create(@RequestBody CreateProductDTO data) {
     	ResponseDTO response = productService.create(data);
 		return ResponseEntity.status(response.status()).body(response);
     }

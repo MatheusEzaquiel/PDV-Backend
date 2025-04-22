@@ -13,6 +13,7 @@ import com.mbe.viapdv.model.category.Category;
 import com.mbe.viapdv.model.product.Product;
 import com.mbe.viapdv.model.product.dto.BasicProductDTO;
 import com.mbe.viapdv.model.product.dto.UpdateProductDTO;
+import com.mbe.viapdv.model.product.dto.CreateProductDTO;
 import com.mbe.viapdv.repository.ICategoryRepository;
 import com.mbe.viapdv.repository.IProductRepository;
 import com.mbe.viapdv.util.ResponseDTO;
@@ -56,7 +57,7 @@ public class ProductService {
 		
 	}
 	
-	public ResponseDTO create(UpdateProductDTO data) {
+	public ResponseDTO create(CreateProductDTO data) {
 
 		Product newProduct = new Product();
 		Optional<Product> productOpt = productRepos.findBySku(data.sku());
