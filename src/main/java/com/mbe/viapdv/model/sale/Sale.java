@@ -32,16 +32,16 @@ public class Sale {
     @Column(name = "total_price", precision = 10, scale = 2, nullable = false)
     private BigDecimal totalPrice;
 
-    @Column(name = "payment_method", length = 50, nullable = false)
+    @Column(name = "payment_method", length = 50, nullable = true)
     private String paymentMethod;
 
-    @Column(name = "isactive", nullable = false)
+    @Column(name = "active")
     private Boolean isActive;
 
     @Column(name = "created", nullable = false, updatable = false)
     private LocalDateTime created;
 
-    @Column(name = "updated", nullable = false)
+    @Column(name = "updated")
     private LocalDateTime updated;
     
     @OneToMany(mappedBy = "sale")
@@ -83,11 +83,11 @@ public class Sale {
         this.paymentMethod = paymentMethod;
     }
 
-    public Boolean getIsActive() {
+    public Boolean isActive() {
         return isActive;
     }
 
-    public void setIsActive(Boolean isActive) {
+    public void setActive(Boolean isActive) {
         this.isActive = isActive;
     }
 

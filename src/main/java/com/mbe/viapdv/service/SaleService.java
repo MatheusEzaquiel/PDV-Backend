@@ -60,78 +60,10 @@ public class SaleService {
     	Sale sale = new Sale();
     	sale.setPaymentMethod(null);
     	sale.setCreated(LocalDateTime.now());
-    	sale.setIsActive(true);
+    	sale.setActive(true);
     	
 		saleRepos.save(sale);
 		return new ResponseDTO(HttpStatus.NOT_FOUND.value(), null, "Venda Criada!");
 	}
 	
-	@Transactional
-	public ResponseDTO addSalesItemInSale(Long saleId, String skuCode, CreateSaleItemDTO data) {
-		
-    	Optional<Sale> optCurrentSale = null;
-    	SaleItem saleItem = new SaleItem();
-    	Product product = new Product();
-    	
-    	// Resgatar Venda Atual da Sessão
-    	optCurrentSale = saleRepos.findById(saleId);
-    	
-    	if(optCurrentSale.isEmpty()) 
-    		return new ResponseDTO(HttpStatus.NOT_FOUND.value(), null, "Venda Não encontrada");
-    	
-    	
-        	// Resgatar Produto pelo Código e Quantidade da Sessão
-        	Optional<Product> optProduct = productRepos.findBySku(skuCode);
-        	if(optProduct.isEmpty()) 
-        		return new ResponseDTO(HttpStatus.NOT_FOUND.value(), null, "Venda Não encontrada");
-        	
-        	// Product Price x Product Qty
-			BigDecimal totalSaleItem = product.getPrice().multiply(new BigDecimal(data.quantity()));
-
-			// Add Product in SaleItem
-			saleItem.setProduct(product);
-			saleItem.setQuantity(data.quantity());
-			saleItem.setUnitPrice(product.getPrice());
-			saleItem.setTotalPrice(totalSaleItem);
-			saleItem.setSale(optCurrentSale.get());
-			saleItem.setCreated(LocalDateTime.now());
-			saleItem.setActive(true);
-
-			if (saleItemService.save(saleItem)) {
-				System.out.println("Item " + saleItem.getProduct().getName() + " - R$" + saleItem.getUnitPrice() + " X " + saleItem.getQuantity());
-				boolean isUpdatedSale = updatePrice(saleItem.getSale().getId(), saleItem.getTotalPrice());
-				
-				if(isUpdatedSale)
-					return new ResponseDTO(HttpStatus.CREATED.value(), new ListSaleDTO(saleItem.getSale()), "Pedido adicionado à Venda!");
-			}
-			
-			return new ResponseDTO(HttpStatus.NOT_FOUND.value(), null, "Venda não Atualizada!");
-	}
-	
-	@Transactional
-	private boolean updatePrice(Long id, BigDecimal totalSaleItem) {
-		
-		BigDecimal currentTotal = BigDecimal.ZERO;
-		BigDecimal newTotal = BigDecimal.ZERO;
-		
-		Optional<Sale> optSale = saleRepos.findById(id); 
-		
-		if(optSale.isEmpty())
-			return false;
-		
-		// Atualizar o totalPrice
-		if(optSale.get() != null) {
-		    currentTotal = optSale.get().getTotalPrice() != null ? optSale.get().getTotalPrice() : BigDecimal.ZERO;
-		    newTotal = currentTotal.add(totalSaleItem);
-		    optSale.get().setTotalPrice(newTotal);
-		}
-		
-		System.out.println("Total Venda atualizado de " + currentTotal + " para " + newTotal);
-		
-		if(saleRepos.save(optSale.get()) != null)
-			return true;
-
-
-		return false;
-	}
 }
