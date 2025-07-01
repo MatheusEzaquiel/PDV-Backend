@@ -29,10 +29,17 @@ public class UserController {
 	
 	@GetMapping
 	public ResponseEntity<ResponseDTO> list() {
-		ResponseDTO response = userService.listActiveUsers();
+		ResponseDTO response = userService.listAllUsers();
 		return ResponseEntity.status(response.status()).body(response);
 	}
-	
+
+	@GetMapping("/userRole")
+	public ResponseEntity<ResponseDTO> userRoleList() {
+		System.out.println("ok");
+		ResponseDTO response = userService.listUsersWithRoles();
+		return ResponseEntity.status(response.status()).body(response);
+	}
+
 	@GetMapping("/{id}")
     public ResponseEntity<ResponseDTO> get(@PathVariable("id") Long id) {
 		ResponseDTO response = userService.getById(id); 

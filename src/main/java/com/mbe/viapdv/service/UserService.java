@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+import com.mbe.viapdv.model.user.dto.BasicUserDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -35,16 +36,25 @@ public class UserService {
 	@Autowired
 	IRoleRepository roleRepos;
 
-	public ResponseDTO listActiveUsers() {
 
-		List<ListUserRoleDTO> dtoList = userRoleRepos.findByActiveTrue().stream().map((userRole) -> {
-			Role role = userRole.getId().getRole();
-			User user = userRole.getId().getUser();
+	public ResponseDTO listAllUsers() {
 
-			ListUserRoleDTO dtoRow = new ListUserRoleDTO(user.getName(), user.getEmail(), role.getName(), user.getId(),
-					role.getId());
-			return dtoRow;
-		}).toList();
+		List<BasicUserDTO> basicUserDTOList = userRepos.findAll().stream()
+				.map(BasicUserDTO::new)
+				.toList();
+
+		return new ResponseDTO(HttpStatus.OK.value(), basicUserDTOList, null);
+	}
+
+	public ResponseDTO listUsersWithRoles() {
+
+		List<ListUserRoleDTO> dtoList = userRoleRepos.findByActiveTrue().stream()
+				.map((userRole) -> {
+					Role role = userRole.getId().getRole();
+					User user = userRole.getId().getUser();
+
+					return new ListUserRoleDTO(user.getName(), user.getEmail(), role.getName(), user.getId(), role.getId());
+				}).toList();
 
 		return new ResponseDTO(HttpStatus.OK.value(), dtoList, null);
 	}
