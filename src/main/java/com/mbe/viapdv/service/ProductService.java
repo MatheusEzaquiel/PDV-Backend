@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+import com.mbe.viapdv.model.product.dto.DetailProductDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -43,7 +44,8 @@ public class ProductService {
 		if (optProduct.isEmpty())
 			return new ResponseDTO(HttpStatus.NOT_FOUND.value(), null, "Produto não encontrado");
 
-		return new ResponseDTO(HttpStatus.OK.value(), optProduct.get(), "Produto Encontrado");
+		DetailProductDTO basicProductDTO = new DetailProductDTO(optProduct.get());
+		return new ResponseDTO(HttpStatus.OK.value(), basicProductDTO, "Produto Encontrado");
 	}
 
 	public ResponseDTO getBySKU(String sku) {
@@ -96,7 +98,9 @@ public class ProductService {
 		if (data.name() != null && !data.name().isBlank() && !data.name().equals(productToUpdt.getName()))
 			productToUpdt.setName(data.name());
 
-		if (data.price() != null && (data.price().compareTo(BigDecimal.ZERO) == 1) && !(data.price().compareTo(productToUpdt.getPrice()) == 1)) //Verificar o igual aqui
+		if (data.price() != null &&
+				(data.price().compareTo(BigDecimal.ZERO) == 1) &&
+				!(data.price().compareTo(productToUpdt.getPrice()) == 0))
 			productToUpdt.setPrice(data.price());
 
 		if (data.sku() != null && !data.sku().isBlank() && !data.sku().equals(productToUpdt.getSku()))
