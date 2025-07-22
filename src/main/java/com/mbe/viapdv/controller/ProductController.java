@@ -52,6 +52,13 @@ public class ProductController {
     	ResponseDTO response = productService.delete(id);
 		return ResponseEntity.status(response.status()).body(response);
     }
+
+	@GetMapping("/search")
+	public ResponseEntity<ResponseDTO> search(@RequestParam(required = false)  String name) {
+		ResponseDTO response = productService.search(name);
+		return ResponseEntity.status(response.status()).body(response);
+	}
+
     /*
     @GetMapping("/products/category/{category}")
     public String delete(@PathVariable("category") String code) {
