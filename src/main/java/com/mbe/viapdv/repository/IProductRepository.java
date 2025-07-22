@@ -24,4 +24,8 @@ public interface IProductRepository extends JpaRepository<Product, Long>{
 	
 	Optional<Product> findBySku(@Param("sku") String sku);
 
+	Boolean existsBySku(@Param("sku") String sku);
+	Boolean existsByBarcode(@Param("barcode") String barcode);
+	Boolean existsByName(@Param("name") String name);
+
 }

@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 
 import com.mbe.viapdv.model.product.Product;
 
-public record CreateProductDTO(String name, BigDecimal price, String sku, String barcode, Integer stockQty, Long categoryId) {
+public record CreateProductDTO(String name, BigDecimal price, String sku, String barcode, Integer stockQuantity, Long categoryId) {
 	
 	public CreateProductDTO(Product product) {
         this(

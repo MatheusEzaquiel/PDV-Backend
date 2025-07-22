@@ -62,10 +62,20 @@ public class ProductService {
 	public ResponseDTO create(CreateProductDTO data) {
 
 		Product newProduct = new Product();
-		Optional<Product> productOpt = productRepos.findBySku(data.sku());
-		
-		if (productOpt.isPresent())
-			return new ResponseDTO(HttpStatus.NOT_FOUND.value(), null, "Produto com este SKU já existe!");
+
+		Boolean existName = productRepos.existsByName(data.name());
+		Boolean existSku = productRepos.existsBySku(data.sku());
+		Boolean existBarcode = productRepos.existsByBarcode(data.sku());
+
+		if (existName.booleanValue())
+			return new ResponseDTO(HttpStatus.CONFLICT.value(), null, "Produto com este Nome já existe!");
+
+		if (existSku.booleanValue())
+			return new ResponseDTO(HttpStatus.CONFLICT.value(), null, "Produto com este SKU já existe!");
+
+		if (existBarcode.booleanValue())
+			return new ResponseDTO(HttpStatus.CONFLICT.value(), null, "Produto com este Código de Barra já existe!");
+
 
 		if (data.name() != null && !data.name().isBlank())
 			newProduct.setName(data.name());
@@ -79,8 +89,8 @@ public class ProductService {
 		if (data.barcode() != null && !data.barcode().isBlank())
 			newProduct.setBarcode(data.barcode());
 
-		if (data.stockQty() != null && data.stockQty() > 0)
-			newProduct.setStockQuantity(data.stockQty());
+		if (data.stockQuantity() != null && data.stockQuantity() > 0)
+			newProduct.setStockQuantity(data.stockQuantity());
 
 		BasicProductDTO dto = new BasicProductDTO(productRepos.save(newProduct));
 		return new ResponseDTO(HttpStatus.CREATED.value(), dto, "Produto Criado com Sucesso!");
