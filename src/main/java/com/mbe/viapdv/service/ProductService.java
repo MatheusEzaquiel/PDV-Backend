@@ -152,6 +152,9 @@ public class ProductService {
 
 	public ResponseDTO search(String name) {
 
+		if(name.isBlank())
+			return new ResponseDTO(HttpStatus.NOT_FOUND.value(), null, "Pesquise por um identificador válido!");
+
 		Optional<List<Product>> optProductList = productRepos.search(name);
 
 		if (optProductList.isEmpty())
