@@ -13,9 +13,13 @@ import jakarta.persistence.Table;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 import com.mbe.viapdv.model.saleItem.SaleItem;
 import com.mbe.viapdv.model.user.User;
+import org.hibernate.annotations.UuidGenerator;
+
+import static org.hibernate.annotations.UuidGenerator.Style.AUTO;
 
 @Entity
 @Table(name = "sales")
@@ -46,6 +50,9 @@ public class Sale {
     
     @OneToMany(mappedBy = "sale")
     private List<SaleItem> saleItems;
+
+    @Column(unique = true, updatable = false)
+    private UUID uuid;
 
 
     public Sale() {}
