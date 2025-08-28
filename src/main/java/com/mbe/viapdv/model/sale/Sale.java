@@ -56,9 +56,17 @@ public class Sale {
 
 
     public Sale() {}
-    
 
-	public Long getId() {
+    public Sale(User user, UUID uuid, String paymentMethod, BigDecimal totalPrice) {
+        this.user = user;
+        this.totalPrice = totalPrice;
+        this.uuid = uuid;
+        this.paymentMethod = paymentMethod;
+        this.created = LocalDateTime.now();
+        this.isActive = true;
+    }
+
+    public Long getId() {
         return id;
     }
 
@@ -120,5 +128,13 @@ public class Sale {
 
     public void setSaleItems(List<SaleItem> saleItems) {
         this.saleItems = saleItems;
+    }
+
+    public UUID getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(UUID uuid) {
+        this.uuid = uuid;
     }
 }

@@ -42,6 +42,18 @@ public class SaleItem {
     @Column(nullable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP")
     private LocalDateTime updated = LocalDateTime.now();
 
+    public SaleItem() {}
+
+    public SaleItem(Product product, BigDecimal unitPrice, Integer quantity, BigDecimal totalPrice, Sale sale) {
+        this.created = LocalDateTime.now();
+        this.active = true;
+        this.totalPrice = totalPrice;
+        this.unitPrice = unitPrice;
+        this.quantity = quantity;
+        this.product = product;
+        this.sale = sale;
+    }
+
     // Getters and Setters
     public Long getId() {
         return id;

@@ -4,7 +4,13 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
+import com.mbe.viapdv.enums.PaymentType;
+import com.mbe.viapdv.model.sale.dto.CreateSaleCompleteDTO;
+import com.mbe.viapdv.model.user.User;
+import com.mbe.viapdv.repository.ISaleItemRepository;
+import com.mbe.viapdv.repository.IUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -28,7 +34,13 @@ public class SaleService {
 	ISalesRepository saleRepos;
 	
 	@Autowired
-	IProductRepository productRepos;
+	IProductRepository productRepository;
+
+	@Autowired
+	ISaleItemRepository saleItemRepository;
+
+	@Autowired
+	IUserRepository userRepository;
 	
 	@Autowired
 	SaleItemService saleItemService;
@@ -63,7 +75,40 @@ public class SaleService {
     	sale.setActive(true);
     	
 		saleRepos.save(sale);
-		return new ResponseDTO(HttpStatus.NOT_FOUND.value(), null, "Venda Criada!");
+		return new ResponseDTO(HttpStatus.OK.value(), null, "Venda Criada!");
+	}
+
+	@Transactional
+	public ResponseDTO createCompleteSale(CreateSaleCompleteDTO data) {
+
+		Optional<User> userSale = userRepository.findById(data.sale().userId());
+		if (userSale.isEmpty())
+			return new ResponseDTO(HttpStatus.NOT_FOUND.value(), data.sale().paymentType(), "Usuário não encontrado!");
+
+		PaymentType paymentType = (data.sale().paymentType() != null)
+				? PaymentType.valueOf(data.sale().paymentType().toString())
+				: PaymentType.NOT_INFORMED;
+
+		ListSaleDTO listSaleDTO = null;
+		UUID uuid = (UUID.fromString(data.sale().uuid()));
+		Sale sale = new Sale(userSale.get(), uuid,  paymentType.name(), data.sale().total());
+		sale = saleRepos.save(sale);
+
+		// SaleItems
+		for(CreateSaleItemDTO saleItemDTO : data.saleItemList()) {
+			Optional<Product> optProduct = productRepository.findById(saleItemDTO.productId());
+			if(optProduct.isEmpty())
+				return new ResponseDTO(HttpStatus.NOT_FOUND.value(), null, "Produto não encontrado");
+
+			Product product = optProduct.get();
+			BigDecimal totalSaleItem = product.getPrice().multiply(new BigDecimal(saleItemDTO.quantity()));
+
+			// Add Product in SaleItem
+			SaleItem saleItem = new SaleItem(product, product.getPrice(), saleItemDTO.quantity(), totalSaleItem, sale);
+			SaleItem saleItemSaved = saleItemRepository.save(saleItem);
+			listSaleDTO = new ListSaleDTO(saleItemSaved.getSale());
+		}
+		return new ResponseDTO(HttpStatus.OK.value(), listSaleDTO, "Venda Criada!");
 	}
 	
 }

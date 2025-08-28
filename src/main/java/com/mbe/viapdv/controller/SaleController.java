@@ -1,6 +1,10 @@
 package com.mbe.viapdv.controller;
 
+import com.mbe.viapdv.model.product.Product;
+import com.mbe.viapdv.model.sale.dto.CreateSaleCompleteDTO;
+import com.mbe.viapdv.repository.IProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -17,12 +21,17 @@ import com.mbe.viapdv.service.SaleItemService;
 import com.mbe.viapdv.service.SaleService;
 import com.mbe.viapdv.util.ResponseDTO;
 
+import java.util.Optional;
+
 @RestController
 @RequestMapping("sales")
 public class SaleController {
 	
 	@Autowired
 	SaleService saleService;
+
+	@Autowired
+	IProductRepository productRepository;
 	
 	
 	@GetMapping
@@ -37,5 +46,12 @@ public class SaleController {
 		return ResponseEntity.status(response.status()).body(response);
 	}
 
-	
+	@PostMapping("/complete-sale")
+	public ResponseEntity<ResponseDTO> createCompleteSale(@RequestBody CreateSaleCompleteDTO data) {
+		System.out.println(data.sale());
+		System.out.println(data.saleItemList());
+		ResponseDTO response = saleService.createCompleteSale(data);
+
+		return ResponseEntity.status(response.status()).body(response);
+	}
 }
