@@ -7,10 +7,14 @@ import java.util.Optional;
 import java.util.UUID;
 
 import com.mbe.viapdv.enums.PaymentType;
+import com.mbe.viapdv.exception.ConsistencySaleException;
+import com.mbe.viapdv.exception.ItemNotFoundException;
 import com.mbe.viapdv.model.sale.dto.CreateSaleCompleteDTO;
 import com.mbe.viapdv.model.user.User;
 import com.mbe.viapdv.repository.ISaleItemRepository;
 import com.mbe.viapdv.repository.IUserRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -44,8 +48,11 @@ public class SaleService {
 	
 	@Autowired
 	SaleItemService saleItemService;
-	
-	
+
+	private static final Logger logger = LoggerFactory.getLogger(SaleService.class);
+
+
+
 	public ResponseDTO listActive() {
 
     	List<ListSaleDTO> saleList = saleRepos.findByIsActiveTrue().stream()
@@ -59,8 +66,10 @@ public class SaleService {
 		
 		Optional<Sale> optSale = saleRepos.findById(id); 
 		
-		if(optSale.isEmpty())
-			return new ResponseDTO(HttpStatus.NOT_FOUND.value(), null, "Venda Não encontrada");
+		if(optSale.isEmpty()) {
+			logger.warn("Sale not found ID: {}", optSale.get().getId());
+			throw new ItemNotFoundException("Sale Not Found");
+		}
 		
 		return new ResponseDTO(HttpStatus.OK.value(), optSale.get(), "Venda encontrada!");
 		
@@ -82,8 +91,12 @@ public class SaleService {
 	public ResponseDTO createCompleteSale(CreateSaleCompleteDTO data) {
 
 		Optional<User> userSale = userRepository.findById(data.sale().userId());
-		if (userSale.isEmpty())
-			return new ResponseDTO(HttpStatus.NOT_FOUND.value(), data.sale().paymentType(), "Usuário não encontrado!");
+		if (userSale.isEmpty()) {
+			logger.warn("Product not found ID: {}", userSale.get().getId());
+			throw new ItemNotFoundException("User Not Found");
+		}
+
+
 
 		PaymentType paymentType = (data.sale().paymentType() != null)
 				? PaymentType.valueOf(data.sale().paymentType().toString())
@@ -97,8 +110,10 @@ public class SaleService {
 		// SaleItems
 		for(CreateSaleItemDTO saleItemDTO : data.saleItemList()) {
 			Optional<Product> optProduct = productRepository.findById(saleItemDTO.productId());
-			if(optProduct.isEmpty())
-				return new ResponseDTO(HttpStatus.NOT_FOUND.value(), null, "Produto não encontrado");
+			if(optProduct.isEmpty()) {
+				logger.warn("Product not found ID: {}", saleItemDTO.productId());
+				throw new ItemNotFoundException("Product Not Found");
+			}
 
 			Product product = optProduct.get();
 			BigDecimal totalSaleItem = product.getPrice().multiply(new BigDecimal(saleItemDTO.quantity()));
