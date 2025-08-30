@@ -97,7 +97,6 @@ public class SaleService {
 		}
 
 
-
 		PaymentType paymentType = (data.sale().paymentType() != null)
 				? PaymentType.valueOf(data.sale().paymentType().toString())
 				: PaymentType.NOT_INFORMED;
@@ -107,6 +106,7 @@ public class SaleService {
 		Sale sale = new Sale(userSale.get(), uuid,  paymentType.name(), data.sale().total());
 		sale = saleRepos.save(sale);
 
+		BigDecimal calcTotal = BigDecimal.ZERO;
 		// SaleItems
 		for(CreateSaleItemDTO saleItemDTO : data.saleItemList()) {
 			Optional<Product> optProduct = productRepository.findById(saleItemDTO.productId());
@@ -122,7 +122,13 @@ public class SaleService {
 			SaleItem saleItem = new SaleItem(product, product.getPrice(), saleItemDTO.quantity(), totalSaleItem, sale);
 			SaleItem saleItemSaved = saleItemRepository.save(saleItem);
 			listSaleDTO = new ListSaleDTO(saleItemSaved.getSale());
+
+			calcTotal = calcTotal.add(totalSaleItem);
 		}
+
+		if(calcTotal.compareTo(sale.getTotalPrice()) != BigDecimal.ZERO.intValue())
+			throw new ConsistencySaleException("Price of sale doesn't match with price of ItemSale sum");
+
 		return new ResponseDTO(HttpStatus.OK.value(), listSaleDTO, "Venda Criada!");
 	}
 	

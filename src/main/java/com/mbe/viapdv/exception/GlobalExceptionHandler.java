@@ -10,7 +10,13 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler
     public ResponseEntity<ResponseErrorDTO> handleItemNotFoundException(ItemNotFoundException ex) {
-        ResponseErrorDTO response = new ResponseErrorDTO(ex.getMessage(), HttpStatus.BAD_REQUEST.value());
-        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        ResponseErrorDTO response = new ResponseErrorDTO(ex.getMessage(), HttpStatus.NOT_FOUND.value());
+        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<ResponseErrorDTO> ConsistencySaleException(ConsistencySaleException ex) {
+        ResponseErrorDTO response = new ResponseErrorDTO(ex.getMessage(), HttpStatus.CONFLICT.value());
+        return new ResponseEntity<>(response, HttpStatus.CONFLICT);
     }
 }
