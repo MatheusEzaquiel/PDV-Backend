@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import com.mbe.viapdv.enums.OperationStatus;
 import com.mbe.viapdv.enums.PaymentType;
 import com.mbe.viapdv.exception.ConsistencySaleException;
 import com.mbe.viapdv.exception.ItemNotFoundException;
@@ -104,7 +105,9 @@ public class SaleService {
 		ListSaleDTO listSaleDTO = null;
 		UUID uuid = (UUID.fromString(data.sale().uuid()));
 		Sale sale = new Sale(userSale.get(), uuid,  paymentType.name(), data.sale().total());
+		sale.setStatus(OperationStatus.ACTIVE);
 		sale = saleRepos.save(sale);
+
 
 		BigDecimal calcTotal = BigDecimal.ZERO;
 		// SaleItems
