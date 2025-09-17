@@ -29,9 +29,12 @@ public interface IProductRepository extends JpaRepository<Product, Long>{
 	Boolean existsByName(@Param("name") String name);
 
 	@Query("SELECT p FROM Product p " +
-			"WHERE (:name IS NULL OR LOWER(p.name) LIKE LOWER(CONCAT('%', :name, '%'))) " +
-			"OR (:name IS NULL OR LOWER(p.sku) LIKE LOWER(CONCAT('%', :name, '%'))) " +
-			"OR (:name IS NULL OR LOWER(p.barcode) LIKE LOWER(CONCAT('%', :name, '%'))) ")
+			"WHERE p.active = TRUE " +
+			"AND ( :name IS NULL " +
+			"   OR LOWER(p.name) LIKE LOWER(CONCAT('%', :name, '%')) " +
+			"   OR LOWER(p.sku) LIKE LOWER(CONCAT('%', :name, '%')) " +
+			"   OR LOWER(p.barcode) LIKE LOWER(CONCAT('%', :name, '%')) )")
 	Optional<List<Product>> search(@Param("name") String name);
+
 
 }

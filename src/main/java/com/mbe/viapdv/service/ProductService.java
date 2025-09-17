@@ -161,7 +161,7 @@ public class ProductService {
 			return new ResponseDTO(HttpStatus.NOT_FOUND.value(), null, "Produto não encontrado!");
 
 		List<BasicProductDTO> productDTOList = optProductList.get().stream()
-				.map(BasicProductDTO::new )
+				.map(BasicProductDTO::new)
 				.toList();
 
 		return new ResponseDTO(HttpStatus.ACCEPTED.value(), productDTOList, "Opções de Produto Encontrado!");
