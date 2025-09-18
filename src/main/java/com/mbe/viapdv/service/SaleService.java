@@ -46,6 +46,9 @@ public class SaleService {
 
 	@Autowired
 	IUserRepository userRepository;
+
+	@Autowired
+	ProductService productService;
 	
 	@Autowired
 	SaleItemService saleItemService;
@@ -119,6 +122,10 @@ public class SaleService {
 			}
 
 			Product product = optProduct.get();
+
+			// Verify Qty Products in stock
+			productService.decreaseStock(product, saleItemDTO.quantity());
+
 			BigDecimal totalSaleItem = product.getPrice().multiply(new BigDecimal(saleItemDTO.quantity()));
 
 			// Add Product in SaleItem
@@ -131,6 +138,7 @@ public class SaleService {
 
 		if(calcTotal.compareTo(sale.getTotalPrice()) != BigDecimal.ZERO.intValue())
 			throw new ConsistencySaleException("Price of sale doesn't match with price of ItemSale sum");
+
 
 		return new ResponseDTO(HttpStatus.OK.value(), listSaleDTO, "Venda Criada!");
 	}

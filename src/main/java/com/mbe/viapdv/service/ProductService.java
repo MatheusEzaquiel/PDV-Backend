@@ -5,7 +5,10 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+import com.mbe.viapdv.exception.ConsistencySaleException;
 import com.mbe.viapdv.model.product.dto.DetailProductDTO;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -28,7 +31,9 @@ public class ProductService {
 	
 	@Autowired
 	ICategoryRepository categoryRepos;
-	
+
+
+	private static final Logger logger = LoggerFactory.getLogger(ProductService.class);
 
 	public ResponseDTO listActive() {
 
@@ -165,6 +170,15 @@ public class ProductService {
 				.toList();
 
 		return new ResponseDTO(HttpStatus.ACCEPTED.value(), productDTOList, "Opções de Produto Encontrado!");
+	}
+
+	public void decreaseStock(Product product, int quantity) {
+		if (product.getStockQuantity() < quantity) {
+			logger.warn("Insufficient stock for the requested product");
+			throw new ConsistencySaleException("Requested quantity exceeds available stock");
+		}
+		product.setStockQuantity(product.getStockQuantity() - quantity);
+		productRepos.save(product);
 	}
 
 }
