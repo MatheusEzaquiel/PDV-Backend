@@ -11,8 +11,9 @@ import com.mbe.viapdv.model.user.User;
 public interface IUserRepository extends JpaRepository<User, Long> {
 
 	Optional<User> findByName(String name);
-
 	Optional<User> findByEmail(String email);
+	Optional<User> findByEmailAndActiveTrue(String email);
+
 	
 	Optional<User> findByIdAndActiveTrue(Long id);
 	

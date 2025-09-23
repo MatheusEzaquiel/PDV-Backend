@@ -35,7 +35,6 @@ public class UserController {
 
 	@GetMapping("/userRole")
 	public ResponseEntity<ResponseDTO> userRoleList() {
-		System.out.println("ok");
 		ResponseDTO response = userService.listUsersWithRoles();
 		return ResponseEntity.status(response.status()).body(response);
 	}

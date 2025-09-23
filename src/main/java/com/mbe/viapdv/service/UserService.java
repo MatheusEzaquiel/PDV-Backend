@@ -74,9 +74,9 @@ public class UserService {
 		UserRoleId userRoleID;
 		UserRole userRole;
 
-		Optional<User> userOpt = userRepos.findByName(data.name());
+		Optional<User> userOpt = userRepos.findByEmailAndActiveTrue(data.email());
 		if (userOpt.isPresent())
-			return new ResponseDTO(HttpStatus.NOT_FOUND.value(), null, "Já existe um Usuário com estes dados");
+			return new ResponseDTO(HttpStatus.NOT_FOUND.value(), null, "User with this e-mail alredy exists");
 		else {
 			user = new User(data);
 			userRepos.save(user);
