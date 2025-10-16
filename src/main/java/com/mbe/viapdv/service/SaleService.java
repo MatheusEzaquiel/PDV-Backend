@@ -88,7 +88,7 @@ public class SaleService {
     	sale.setActive(true);
     	
 		saleRepos.save(sale);
-		return new ResponseDTO(HttpStatus.OK.value(), null, "Venda Criada!");
+		return new ResponseDTO(HttpStatus.OK.value(), null, "Venda concluída!");
 	}
 
 	@Transactional
