@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.mbe.viapdv.model.auth.dto.LoginRequestDTO;
 import com.mbe.viapdv.model.role.Role;
 import com.mbe.viapdv.model.user.dto.CreateUserDTO;
 
@@ -15,10 +16,11 @@ import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.JoinColumn;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Table(name = "users")
 @Entity(name = "User")
-public class User {
+public class  User {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -42,6 +44,14 @@ public class User {
 	private Set<Role> roles;
 	
 	public User() {}
+
+	public User(String name, String email, String password) {
+		this.name = name;
+		this.email = email;
+		this.password = password;
+		this.active = true;
+		this.created = LocalDateTime.now();
+	}
 
 	public User(CreateUserDTO data) {
 		this.name = data.name();
@@ -113,6 +123,10 @@ public class User {
 
 	public void setRoles(Set<Role> roles) {
 		this.roles = roles;
+	}
+
+	public boolean isLoginCorrect(LoginRequestDTO loginRequest, PasswordEncoder passwordEncoder) {
+		return passwordEncoder.matches(loginRequest.password(), this.password);
 	}
 	
 }

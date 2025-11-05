@@ -12,6 +12,6 @@ import com.mbe.viapdv.model.role.Role;
 public interface IRoleRepository extends JpaRepository<Role, Long> {
 	
 	List<Role> findByActiveTrue();
-	
+	Optional<Role> findByName(String name);
 	Optional<Role> findByIdAndActiveTrue(Long id);
 }
