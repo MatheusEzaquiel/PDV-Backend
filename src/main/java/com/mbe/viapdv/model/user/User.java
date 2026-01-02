@@ -29,6 +29,7 @@ public class  User {
 	private String email;
 	private String password;
 	private Boolean active;
+	private Boolean customer;
 	
 	@JsonFormat(pattern = "dd-MM-yyyy'T'HH:mm:ss")
 	private LocalDateTime created;
@@ -50,6 +51,7 @@ public class  User {
 		this.email = email;
 		this.password = password;
 		this.active = true;
+		this.customer = false;
 		this.created = LocalDateTime.now();
 	}
 
@@ -58,6 +60,7 @@ public class  User {
 		this.email = data.email();
 		this.password = "pdv";
 		this.active = true;
+		this.customer = false;
 		this.created = LocalDateTime.now();
 	}
 
@@ -99,6 +102,14 @@ public class  User {
 
 	public void setActive(Boolean active) {
 		this.active = active;
+	}
+
+	public Boolean getCustomer() {
+		return customer;
+	}
+
+	public void setCustomer(Boolean customer) {
+		this.customer = customer;
 	}
 
 	public LocalDateTime getCreated() {
