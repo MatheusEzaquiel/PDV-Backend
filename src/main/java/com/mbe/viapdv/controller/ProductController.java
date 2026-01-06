@@ -54,8 +54,8 @@ public class ProductController {
     }
 
 	@GetMapping("/search")
-	public ResponseEntity<ResponseDTO> search(@RequestParam(required = false)  String name) {
-		ResponseDTO response = productService.search(name);
+	public ResponseEntity<ResponseDTO> search(@RequestParam(required = false) String name,
+											  @RequestParam(required = false) String code) {ResponseDTO response = productService.search(name, code);
 		return ResponseEntity.status(response.status()).body(response);
 	}
     

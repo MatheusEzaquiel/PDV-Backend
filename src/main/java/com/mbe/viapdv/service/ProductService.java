@@ -155,12 +155,21 @@ public class ProductService {
 		return new ResponseDTO(HttpStatus.CREATED.value(), dto, "Produto Desabilitado!");
 	}
 
-	public ResponseDTO search(String name) {
+	public ResponseDTO search(String name, String code) {
 
-		if(name.isBlank())
+
+		if(name != null && name.isBlank()
+				&& code != null && code.isBlank()) {
 			return new ResponseDTO(HttpStatus.NOT_FOUND.value(), null, "Pesquise por um identificador válido!");
+		}
 
-		Optional<List<Product>> optProductList = productRepos.search(name);
+		// Código é prioridade de pesquisa por ser específico
+		Optional<List<Product>> optProductList = null;
+		if(code != null) {
+			optProductList = productRepos.searchByCode(code);
+		} else {
+			optProductList = productRepos.searchByName(name);
+		}
 
 		if (optProductList.isEmpty())
 			return new ResponseDTO(HttpStatus.NOT_FOUND.value(), null, "Produto não encontrado!");
