@@ -108,7 +108,7 @@ public class SaleService {
 		ListSaleDTO listSaleDTO = null;
 		UUID uuid = (UUID.fromString(data.sale().uuid()));
 		Sale sale = new Sale(userSale.get(), uuid,  paymentType.name(), data.sale().total());
-		sale.setStatus(OperationStatus.ACTIVE);
+		sale.setStatus(OperationStatus.OPEN);
 		sale = saleRepos.save(sale);
 
 
@@ -139,6 +139,10 @@ public class SaleService {
 		if(calcTotal.compareTo(sale.getTotalPrice()) != BigDecimal.ZERO.intValue())
 			throw new ConsistencySaleException("Price of sale doesn't match with price of ItemSale sum");
 
+		sale.setStatus(OperationStatus.IN_PROGRESS);
+
+		// API de processamento de pagamentos
+		sale.setStatus(OperationStatus.COMPLETED);
 
 		return new ResponseDTO(HttpStatus.OK.value(), listSaleDTO, "Venda Criada!");
 	}

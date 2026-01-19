@@ -2,7 +2,9 @@ package com.mbe.viapdv.enums;
 
 public enum OperationStatus {
     ACTIVE,
-    COMPLETED,
+    OPEN,
+    IN_PROGRESS,
     CLOSED,
+    COMPLETED,
     CANCELED
 }

@@ -142,4 +142,8 @@ public class Sale {
     public void setStatus(OperationStatus status) {
         this.status = status;
     }
+
+    public Boolean getActive() {
+        return isActive;
+    }
 }

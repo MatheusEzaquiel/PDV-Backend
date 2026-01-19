@@ -1,5 +1,6 @@
 package com.mbe.viapdv.model.saleItem;
 
+import com.mbe.viapdv.enums.OperationStatus;
 import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -32,6 +33,9 @@ public class SaleItem {
 
     @Column(name = "total_price", nullable = false, precision = 10, scale = 2)
     private BigDecimal totalPrice;
+
+    @Column(name = "status")
+    private OperationStatus status;
 
     @Column(nullable = false)
     private Boolean active = true;
